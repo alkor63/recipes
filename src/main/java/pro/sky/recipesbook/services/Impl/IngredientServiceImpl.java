@@ -3,6 +3,8 @@ package pro.sky.recipesbook.services.Impl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import pro.sky.recipesbook.model.Ingredient;
+import pro.sky.recipesbook.services.FileService;
+import pro.sky.recipesbook.services.IngredientFileService;
 import pro.sky.recipesbook.services.IngredientService;
 
 import java.util.ArrayList;
@@ -14,6 +16,11 @@ import java.util.Map;
 public class IngredientServiceImpl implements IngredientService {
     private Map<Integer, Ingredient> ingredients = new HashMap<>();
     private int ingId = 0;
+    private final IngredientFileService ingredientFileService;
+
+    public IngredientServiceImpl(IngredientFileService ingredientFileService) {
+        this.ingredientFileService = ingredientFileService;
+    }
 
     @Override
     public int getIngId() {
@@ -24,6 +31,7 @@ public class IngredientServiceImpl implements IngredientService {
     public Ingredient addIngredient(Ingredient ingredient) {
 
         ingredients.putIfAbsent(ingId++, ingredient);
+        ingredientFileService.saveIngredientToFile(String.valueOf(ingredient));
         return ingredient;
     }
 
