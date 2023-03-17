@@ -17,17 +17,18 @@ public class IngredientFileServiceImpl implements IngredientFileService {
     private String ingredientsFileName;
 
     @Override
+
     public boolean saveIngredientToFile(String json) {
         try {
+            cleanIngredientFile();
             Files.writeString(Path.of(dataFilePath, ingredientsFileName), json);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
-
     @Override
-    public String readIngredientFromFile() {
+    public String readIngredientsFromFile() {
         try {
             return Files.readString(Path.of(dataFilePath, ingredientsFileName));
         } catch (IOException e) {

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -31,7 +30,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @PostConstruct
     private void init() {
-//        readRecipeFromFile();
+        readRecipesFromMapFile();
     }
 
     @Override
@@ -45,18 +44,31 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe addRecipe(Recipe recipe) {
+    public Recipe addRecipe(Recipe recipe) throws JsonProcessingException {
         if (!recipes.containsValue(recipe)) {
             recipes.put(recId++, recipe);
             for (Ingredient ingredient : recipe.getIngredients()) {
                 this.ingredientService.addIngredient(ingredient);
 
             }
-            saveRecipeToFile();
+            String json = new ObjectMapper().writeValueAsString(recipes);
+            fileService.saveRecipeToFile(json);
         } else System.out.println("Рецепт " + recipe.getName() + " уже есть в этой книге");
         return recipe;
     }
 
+    //@Override
+//    public Recipe addRecipeFromFile(Recipe recipe) {
+//        if (!recipes.containsValue(recipe)) {
+//            recipes.put(recId++, recipe);
+//            for (Ingredient ingredient : recipe.getIngredients()) {
+//                this.ingredientService.addIngredient(ingredient);
+//
+//            }
+//            saveRecipeToFile();
+//        } else System.out.println("Рецепт " + recipe.getName() + " уже есть в этой книге");
+//        return recipe;
+//    }
     /*
         public List<Recipe> getRecipesByIngredientId(int ingId) {
             Ingredient ingredient = this.ingredientService.getIngredient(ingId);
@@ -80,8 +92,13 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe editRecipe(Long recipeId, Recipe recipe) {
         if (recipes.containsKey(recipeId)) {
             recipes.put(recipeId, recipe);
-            saveRecipeToFile();
-            return recipe;
+            try {
+                String json = new ObjectMapper().writeValueAsString(recipes);
+                fileService.saveRecipeToFile(json);
+                return recipe;
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }
@@ -95,7 +112,13 @@ public class RecipeServiceImpl implements RecipeService {
     public boolean deleteRecipe(Long recipeId) {
         if (recipes.containsKey(recipeId)) {
             recipes.remove(recipeId);
-            return true;
+            try {
+                String json = new ObjectMapper().writeValueAsString(recipes);
+                fileService.saveRecipeToFile(json);
+                return true;
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         return false;
     }
@@ -104,20 +127,31 @@ public class RecipeServiceImpl implements RecipeService {
         try {
             String json = new ObjectMapper().writeValueAsString(recipes);
             fileService.saveRecipeToFile(json);
-            // new JSONObject(map);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void readRecipeFromFile() {
+    private void readRecipesFromMapFile() {
         try {
-            String json = fileService.readRecipeFromFile();
-            new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Recipe>>() {
+            String json = fileService.readRecipesMapFromFile();
+            System.out.println("пока json = " + json);
+            recipes = new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Recipe>>() {
 
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
+//    private void readRecipeFromJsonFile() {
+//        try {
+//            String json = fileService.readRecipeFromFile();
+//            Recipe newRecipe = new ObjectMapper().readValue(json, new TypeReference<Recipe>() {
+//            });
+//            addRecipeFromFile(newRecipe);
+//
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

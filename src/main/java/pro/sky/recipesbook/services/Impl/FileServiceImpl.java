@@ -14,23 +14,36 @@ public class FileServiceImpl implements FileService {
     private String dataFilePath;
 
     @Value("${name.of.recipes.file}")
-    private String recipesFileName;
+//    private String recipesFileName;
+//    @Value("${name.of.recipes.map.file}")
+    private String recipesMapFileName;
 
+    @Value("${name.of.ingredients.file}")
+    private String ingredientsFileName;
     @Override
-
     public boolean saveRecipeToFile(String json) {
         try {
-            Files.writeString(Path.of(dataFilePath, recipesFileName), json);
+            cleanRecipeFile();
+            Files.writeString(Path.of(dataFilePath, recipesMapFileName), json);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
+//    @Override
+//    public String readRecipeFromFile() {
+//        try {
+//            return Files.readString(Path.of(dataFilePath, recipesFileName));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     @Override
-    public String readRecipeFromFile() {
+    public String readRecipesMapFromFile() {
         try {
-            return Files.readString(Path.of(dataFilePath, recipesFileName));
+            return Files.readString(Path.of(dataFilePath, recipesMapFileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +51,7 @@ public class FileServiceImpl implements FileService {
 
     private boolean cleanRecipeFile() {
         try {
-            Path path = Path.of(dataFilePath, recipesFileName);
+            Path path = Path.of(dataFilePath, recipesMapFileName);
             Files.deleteIfExists(path);
             Files.createFile(path);
             return true;
@@ -47,38 +60,5 @@ public class FileServiceImpl implements FileService {
             return false;
         }
     }
-    /*
-    public class JsonHelper {
-    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-    private static final Type TT_mapStringString = new TypeToken<Map<String,String>>(){}.getType();
 
-    public static Map<String, String> jsonToMapStringString(String json) {
-        Map<String, String> ret = new HashMap<String, String>();
-        if (json == null || json.isEmpty())
-            return ret;
-         return gson.fromJson(json, TT_mapStringString);
-    }
-    public static String mapStringStringToJson(Map<String, String> map) {
-        if (map == null)
-            map = new HashMap<String, String>();
-         return gson.toJson(map);
-    }
-}
-variant 2:
-Map<String,Object> map = .... // create a map
-ObjectMapper mapper = new ObjectMapper()
-String jsonFromMap = mapper.writeValueAsString(map);
-variant 3:
-String json = ConvertJsonToObject.toJSON(testMap);
-and you can easily get your original Object back on the other side
-Map<String, String> newTestMap = ConvertJsonToObject.getFromJSON(json,Map.class);
-
-correct one :
-"elementsToUpdate": {
-    "1": {
-      "country": "USA",
-      "title": "string"
-    }
-}
-     */
 }

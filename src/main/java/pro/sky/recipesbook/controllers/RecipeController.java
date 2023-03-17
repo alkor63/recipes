@@ -1,5 +1,6 @@
 package pro.sky.recipesbook.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/recipe")
 @Tag(name = "Книга рецептова", description = "CRUD-операции с рецептами")
 public class RecipeController {
-    private RecipeService recipeService;
+    private final RecipeService recipeService;
 
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
@@ -24,11 +25,15 @@ public class RecipeController {
 
     @PostMapping
     @Operation(summary = "Добавление рецепта в книгу", description = "нужно заполнить все поля рецепта в Body")
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
+    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) throws JsonProcessingException {
         Recipe newRecipe = recipeService.addRecipe(recipe);
         return ResponseEntity.ok(newRecipe);
     }
-
+//    @PostMapping("/json")
+//    @Operation(summary = "Добавление рецепта из файла в книгу", description = "будем читать файл recipes.json")
+//    public ResponseEntity<Recipe> readRecipeFromJsonFile() {
+//        return ResponseEntity.ok().build();
+//    }
     @GetMapping("/{recipeId}")
     @Operation(summary = "Показать один рецепт", description = "нужно указать id рецепта")
     public ResponseEntity<Recipe> getRecipe(@PathVariable Long recipeId) {

@@ -1,5 +1,6 @@
 package pro.sky.recipesbook.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class IngredientController {
 
-    private IngredientService ingredientService;
+    private final IngredientService ingredientService;
 
     public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
@@ -24,7 +25,7 @@ public class IngredientController {
 
     @PostMapping
     @Operation(summary = "Добавить ингредиент", description = "нужно заполнить все поля ингредиента в Body")
-    public ResponseEntity<Ingredient> createIngredient(@RequestBody Ingredient ingredient) {
+    public ResponseEntity<Ingredient> createIngredient(@RequestBody Ingredient ingredient) throws JsonProcessingException {
         Ingredient newIngredient = ingredientService.addIngredient(ingredient);
         return ResponseEntity.ok(newIngredient);
     }
@@ -40,7 +41,7 @@ public class IngredientController {
 
     @PutMapping("/{ingredientId}")
     @Operation(summary = "Отредактировать ингредиент", description = "нужно указать id и заполнить все поля ингредиента в Body")
-    public ResponseEntity<Ingredient> editIngredient(@PathVariable int ingredientId, @RequestBody Ingredient ingredient) {
+    public ResponseEntity<Ingredient> editIngredient(@PathVariable int ingredientId, @RequestBody Ingredient ingredient) throws JsonProcessingException {
         Ingredient newIngredient = ingredientService.editIngredient(ingredientId, ingredient);
         if (newIngredient == null) {
             return ResponseEntity.notFound().build();
@@ -50,7 +51,7 @@ public class IngredientController {
 
     @DeleteMapping("/{ingredientId}")
     @Operation(summary = "Удалить ингредиент", description = "нужно указать id ингредиента")
-    public ResponseEntity<Void> deleteIngredient(@PathVariable int ingredientId) {
+    public ResponseEntity<Void> deleteIngredient(@PathVariable int ingredientId) throws JsonProcessingException {
         if (ingredientService.deleteIngredient(ingredientId)) {
             return ResponseEntity.ok().build();
         }
