@@ -1,5 +1,7 @@
 package pro.sky.recipesbook.services;
 
+import java.io.File;
+
 public interface FileService {
     boolean saveRecipeToFile(String json);
 
@@ -7,4 +9,9 @@ public interface FileService {
 
     String readRecipesMapFromFile();
 
+    File getRecipeFile();
+
+    File getIngredientFile();
+
+    boolean cleanRecipeFile();
 }

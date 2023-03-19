@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pro.sky.recipesbook.services.FileService;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +21,7 @@ public class FileServiceImpl implements FileService {
 
     @Value("${name.of.ingredients.file}")
     private String ingredientsFileName;
+
     @Override
     public boolean saveRecipeToFile(String json) {
         try {
@@ -49,7 +51,23 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    private boolean cleanRecipeFile() {
+    //public Path createAnyReport(Integer ingredientId) {
+//        Path path = createTempFile();
+//        return path;
+//}
+    @Override
+    public File getRecipeFile() {
+        return new File(dataFilePath + "/" + recipesMapFileName);
+    }
+
+    @Override
+    public File getIngredientFile() {
+        return new File(dataFilePath + "/" + ingredientsFileName);
+
+    }
+
+    @Override
+    public boolean cleanRecipeFile() {
         try {
             Path path = Path.of(dataFilePath, recipesMapFileName);
             Files.deleteIfExists(path);

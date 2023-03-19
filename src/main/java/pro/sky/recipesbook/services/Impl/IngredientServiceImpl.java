@@ -86,7 +86,6 @@ public class IngredientServiceImpl implements IngredientService {
     private void readIngredientsFromFile() {
         try {
             String json = ingredientFileService.readIngredientsFromFile();
-            System.out.println("пока json = " + json);
             ingredients = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {
 
             });

@@ -135,7 +135,6 @@ public class RecipeServiceImpl implements RecipeService {
     private void readRecipesFromMapFile() {
         try {
             String json = fileService.readRecipesMapFromFile();
-            System.out.println("пока json = " + json);
             recipes = new ObjectMapper().readValue(json, new TypeReference<HashMap<Long, Recipe>>() {
 
             });
