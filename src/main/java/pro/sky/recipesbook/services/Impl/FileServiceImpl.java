@@ -1,11 +1,17 @@
 package pro.sky.recipesbook.services.Impl;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pro.sky.recipesbook.services.FileService;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,12 +21,8 @@ public class FileServiceImpl implements FileService {
     private String dataFilePath;
 
     @Value("${name.of.recipes.file}")
-//    private String recipesFileName;
-//    @Value("${name.of.recipes.map.file}")
-    private String recipesMapFileName;
 
-    @Value("${name.of.ingredients.file}")
-    private String ingredientsFileName;
+    private String recipesMapFileName;
 
     @Override
     public boolean saveRecipeToFile(String json) {
@@ -60,11 +62,6 @@ public class FileServiceImpl implements FileService {
         return new File(dataFilePath + "/" + recipesMapFileName);
     }
 
-    @Override
-    public File getIngredientFile() {
-        return new File(dataFilePath + "/" + ingredientsFileName);
-
-    }
 
     @Override
     public boolean cleanRecipeFile() {
@@ -78,5 +75,33 @@ public class FileServiceImpl implements FileService {
             return false;
         }
     }
+@Override
+    public void uploadRecipeFile(MultipartFile file) {
+        cleanRecipeFile();
+        File dataFile = getRecipeFile();
+
+        try (FileOutputStream fos = new FileOutputStream(dataFile)) {
+            IOUtils.copy(file.getInputStream(), fos);
+            ResponseEntity.ok().build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+}
+@Override
+    public boolean downloadRecipeFile() throws FileNotFoundException {
+    File file = getRecipeFile();
+    System.out.println("file в методе файлСервиса downloadRecipeFile ="+file);
+    if (file.exists()) {
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .contentLength(file.length())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipesBook.json\"")
+                .body(resource);
+        return true;
+    }
+        return false;
+}
+
 
 }

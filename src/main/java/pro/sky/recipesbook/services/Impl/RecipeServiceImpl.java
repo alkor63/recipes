@@ -11,6 +11,7 @@ import pro.sky.recipesbook.services.IngredientService;
 import pro.sky.recipesbook.services.RecipeService;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +31,12 @@ public class RecipeServiceImpl implements RecipeService {
 
     @PostConstruct
     private void init() {
-        readRecipesFromMapFile();
-    }
 
+        File file = fileService.getRecipeFile();
+        if (file.exists()) {
+            readRecipesFromMapFile();
+        }
+    }
     @Override
     public Long getRecId() {
         return recId;

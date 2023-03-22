@@ -1,65 +1,64 @@
 package pro.sky.recipesbook.controllers;
 
-import org.apache.commons.io.IOUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pro.sky.recipesbook.services.FileService;
+import pro.sky.recipesbook.services.IngredientFileService;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/files")
 public class FileController {
     private final FileService fileService;
+    private final IngredientFileService ingredientFileService;
 
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, IngredientFileService ingredientFileService) {
         this.fileService = fileService;
+        this.ingredientFileService = ingredientFileService;
     }
 
+
+//    public FileController(FileService fileService) {
+//        this.fileService = fileService;
+//    }
+
     @GetMapping("/recipes/export")
+    @Operation(
+            summary = "Выгрузить файл рецептов",
+            description = "Записать файл с рецептами на диск")
+
     public ResponseEntity<InputStreamResource> downloadRecipeFile() throws FileNotFoundException {
-        File file = fileService.getRecipeFile();
-        if (file.exists()) {
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .contentLength(file.length())
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipesBook.json\"")
-                    .body(resource);
+        System.out.println("Добрались до FileController метод downloadRecipeFile");
+        if (fileService.downloadRecipeFile()) {
+           return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.noContent().build();
         }
     }
 
     @PutMapping(value = "/recipes/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadRecipeFile(@RequestParam MultipartFile file) {
-        fileService.cleanRecipeFile();
-        File dataFile = fileService.getRecipeFile();
-
-        try (FileOutputStream fos = new FileOutputStream(dataFile)) {
-            IOUtils.copy(file.getInputStream(), fos);
-            return ResponseEntity.ok().build();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @Operation(
+            summary = "Добавить файл рецептов",
+            description = "Залить файл с рецептами на сервер"
+    )
+    public ResponseEntity<String> uploadRecipeFile(@RequestParam MultipartFile file) {
+        fileService.uploadRecipeFile(file);
+        return ResponseEntity.ok(file.getName());
     }
 
     @GetMapping("/ingredients/export")
-    public ResponseEntity<InputStreamResource> downloadIngredientFile() throws FileNotFoundException {
-        File file = fileService.getIngredientFile();
-        if (file.exists()) {
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .contentLength(file.length())
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"IngredientList.json\"")
-                    .body(resource);
+    @Operation(
+            summary = "Выгрузить файл ингредиентов",
+            description = "Записать файл с ингредиентами на диск")
+
+    public ResponseEntity<Object> downloadIngredientFile() throws FileNotFoundException {
+        if (ingredientFileService.downloadIngredientFile()) {
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.noContent().build();
         }
