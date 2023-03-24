@@ -14,4 +14,13 @@ public class Recipe {
     private int cookingTimeInMinutes;
     private List<Ingredient> ingredients;
     private List<String> cookingSteps;
+
+    @Override
+    public String toString() {
+        String s = name + "\nВремя приготовления: " + cookingTimeInMinutes + "\n" +
+                "Ингредиенты: \n" + ingredients + "\n" +
+                "Инструкция приготовления: \n" + cookingSteps.stream();
+        return s;
+
+    }
 }

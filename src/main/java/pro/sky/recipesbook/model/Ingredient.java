@@ -11,4 +11,10 @@ public class Ingredient {
     private String name;
     private int quantity;
     private String measureUnit;
+
+    @Override
+    public String toString() {if (name != "[" && measureUnit != "]"){
+        return "\n- " + name + " : " + quantity + " " + measureUnit;}
+        return "";
+    }
 }

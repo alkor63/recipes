@@ -10,7 +10,7 @@ public interface RecipeService {
 
     Long getRecId();
 
-    Map<Long, Recipe> getRecipes();
+//    Map<Long, Recipe> getRecipes();
 
     Recipe addRecipe(Recipe recipe) throws JsonProcessingException;
 

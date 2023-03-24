@@ -356,3 +356,5 @@ GET http://localhost:8080/files/ingredients/export
 GET http://localhost:8080/files/recipes/export
 ###
 PUT http://localhost:8080/files/recipes/import
+###
+GET http://localhost:8080/files/export/txt

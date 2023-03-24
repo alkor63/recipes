@@ -1,15 +1,21 @@
 package pro.sky.recipesbook.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pro.sky.recipesbook.services.FileService;
 import pro.sky.recipesbook.services.IngredientFileService;
+import pro.sky.recipesbook.services.RecipeService;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/files")
@@ -22,10 +28,53 @@ public class FileController {
         this.ingredientFileService = ingredientFileService;
     }
 
+    @GetMapping(value = "/export/txt")
+    @Operation(summary = "Экспорт файла рецептов в формате .txt")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200", description = "запрос на экспорт txt-файла выполнился без проблем"
+            ),
+            @ApiResponse(
+                    responseCode = "400", description = "ошибка в параметрах запроса на экспорт txt-файла"
+            ),
+            @ApiResponse(
+                    responseCode = "404", description = "ошибка в URL или такого действия нет в веб-приложении"
+            ),
+            @ApiResponse(
+                    responseCode = "500", description = "во время выполнения запроса на экспорт txt-файла произошла ошибка на сервере"
+            )
+    }
+    )
 
-//    public FileController(FileService fileService) {
-//        this.fileService = fileService;
-//    }
+        public ResponseEntity<InputStreamResource> downloadTxtFile() throws IOException {
+//            Path path = fileService.saveTxt();
+            InputStreamResource resource = fileService.downloadTxtFile();
+            if (resource == null) {
+                return ResponseEntity.noContent().build();
+            }
+                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN)
+//                        .contentLength(Files.size(path))
+                        .header(HttpHeaders.CONTENT_DISPOSITION , "attachment; filename=\"recipes.txt\"")
+                        .body(resource);
+//        header('Content-Type: application/json; charset=utf-8');
+
+        }
+//        try {
+//            Path path = fileService.saveTxt();
+//            if (Files.size(path) == 0) {
+//                return ResponseEntity.noContent().build();
+//            }
+//            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.TEXT_PLAIN)
+//                    .contentLength(Files.size(path))
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"\"")
+//                    .body(resource);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().body(e.toString());
+//        }
+//
 
     @GetMapping("/recipes/export")
     @Operation(
@@ -33,11 +82,16 @@ public class FileController {
             description = "Записать файл с рецептами на диск")
 
     public ResponseEntity<InputStreamResource> downloadRecipeFile() throws FileNotFoundException {
-        System.out.println("Добрались до FileController метод downloadRecipeFile");
-        if (fileService.downloadRecipeFile()) {
-           return ResponseEntity.ok().build();
-        } else {
+//        System.out.println("Добрались до FileController метод downloadRecipeFile");
+        File file = fileService.getRecipeFile();
+        InputStreamResource resource = fileService.downloadRecipeFile();
+        if (resource == null) {
             return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .contentLength(file.length())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipesBook.json\"")
+                    .body(resource);
         }
     }
 
@@ -56,13 +110,19 @@ public class FileController {
             summary = "Выгрузить файл ингредиентов",
             description = "Записать файл с ингредиентами на диск")
 
-    public ResponseEntity<Object> downloadIngredientFile() throws FileNotFoundException {
-        if (ingredientFileService.downloadIngredientFile()) {
-            return ResponseEntity.ok().build();
-        } else {
+    public ResponseEntity<InputStreamResource> downloadIngredientFile() throws FileNotFoundException {
+        File file = ingredientFileService.getIngredientFile();
+        InputStreamResource resource = ingredientFileService.downloadIngredientFile();
+        if (resource == null) {
             return ResponseEntity.noContent().build();
         }
+        return
+                ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                        .contentLength(file.length())
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"IngredientList.json\"")
+                        .body(resource);
     }
+
     /*
 @GetMapping("/RecipesWithIngredient/{ingredientId}")
     public ResponseEntity<Object> editIngredientFile(@PathVariable Integer ingredientId) {

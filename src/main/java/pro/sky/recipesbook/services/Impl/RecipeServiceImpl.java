@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
-    private Map<Long, Recipe> recipes = new HashMap<>();
+    private static Map<Long, Recipe> recipes = new HashMap<>();
     private Long recId = 0L;
     private final IngredientService ingredientService;
     private final FileService fileService;
@@ -42,8 +42,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recId;
     }
 
-    @Override
-    public Map<Long, Recipe> getRecipes() {
+    public static Map<Long, Recipe> getRecipes() {
         return recipes;
     }
 

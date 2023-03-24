@@ -2,9 +2,6 @@ package pro.sky.recipesbook.services.Impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pro.sky.recipesbook.services.IngredientFileService;
 
@@ -55,19 +52,22 @@ public class IngredientFileServiceImpl implements IngredientFileService {
         }
     }
     @Override
-    public boolean downloadIngredientFile() throws FileNotFoundException {
+    public InputStreamResource downloadIngredientFile() throws FileNotFoundException {
         File file = getIngredientFile();
         if (file.exists()) {
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .contentLength(file.length())
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"IngredientList.json\"")
-                    .body(resource);
-            return true;
-        } else {
-            return false;
+
+            return new InputStreamResource(new FileInputStream(file));
+        }             return null;
         }
-    }
+//        public InputStreamResource downloadRecipeFile() throws FileNotFoundException {
+//            File file = getRecipeFile();
+//            System.out.println("file в методе файлСервиса downloadRecipeFile = " + file);
+//            if (file.exists()) {
+//                return ;
+//            }
+//            return null;
+//        }
+
     @Override
     public File getIngredientFile() {
         return new File(dataFilePath + "/" + ingredientsFileName);

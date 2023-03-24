@@ -1,5 +1,7 @@
 package pro.sky.recipesbook.services;
 
+import org.springframework.core.io.InputStreamResource;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -8,7 +10,7 @@ public interface IngredientFileService {
 
     String readIngredientsFromFile();
 
-    boolean downloadIngredientFile() throws FileNotFoundException;
+    InputStreamResource downloadIngredientFile() throws FileNotFoundException;
 
     File getIngredientFile();
 }
