@@ -3,6 +3,8 @@ package pro.sky.recipesbook.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import pro.sky.recipesbook.model.Recipe;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -34,4 +36,6 @@ public interface RecipeService {
     void deleteAllRecipes();
 
     boolean deleteRecipe(Long recipeId);
+
+    Path createTxtFile() throws IOException;
 }

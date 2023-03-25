@@ -12,13 +12,6 @@ import java.nio.file.Path;
 public interface FileService {
     boolean saveRecipeToFile(String json);
 
-//    String readRecipeFromFile();
-
-//    Path saveTxt() throws IOException;
-
-    Path saveTxt() throws IOException;
-
-
     Path createTempFile(String suffix);
 
     String readRecipesMapFromFile();
@@ -31,5 +24,4 @@ public interface FileService {
 
     InputStreamResource downloadRecipeFile() throws FileNotFoundException;
 
-    InputStreamResource downloadTxtFile() throws IOException;
 }

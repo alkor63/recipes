@@ -45,35 +45,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Path saveTxt() throws IOException {
-        Path path = createTempFile(".txt");
-////        File dataFile = getRecipeFile();
-//        List<Recipe> allRecipes = new ArrayList<>(RecipeServiceImpl.getRecipes().values());
-//        Path path = Files.createTempFile(Path.of(dataFilePath), "tempFile", "txt");
-        List<Recipe> allRecipes = new ArrayList<>(RecipeServiceImpl.getRecipes().values());
-        for (Recipe recipe : allRecipes) {
-            System.out.println("РЕЦЕПТ = " + recipe.toString());
-            try {
-String s = recipe.getName() + "\nвремя приготовления: " + recipe.getCookingTimeInMinutes() + " мин.\nингредиенты: " +
-                        recipe.getIngredients().toString() + "\nИнструкция приготовления:\n";
-                List<String> steps = recipe.getCookingSteps();
-                for (int i = 0; i < steps.size(); i++) {
-                     s = s + (i + 1) + " " + steps.get(i) + "\n";}
-                    BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-                    writer.write(s);
-
-                return path;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return path;
-    }
-
-    @Override
     public Path createTempFile(String suffix) {
         try {
-            return Files.createTempFile(Path.of(dataFilePath), "tempFile", suffix);
+            return Files.createTempFile(Path.of(dataFilePath), "tmpFile", suffix);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -139,20 +113,6 @@ String s = recipe.getName() + "\nвремя приготовления: " + reci
         System.out.println("file в методе файлСервиса downloadRecipeFile = " + file);
         if (file.exists()) {
             return new InputStreamResource(new FileInputStream(file));
-        }
-        return null;
-    }
-
-    @Override
-    public InputStreamResource downloadTxtFile() throws IOException {
-        Path path = saveTxt();
-        if (Files.exists(path)) {
-
-            try {
-                return new InputStreamResource(new FileInputStream(path.toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
         return null;
     }

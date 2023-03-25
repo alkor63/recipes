@@ -12,6 +12,11 @@ import pro.sky.recipesbook.services.RecipeService;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +42,7 @@ public class RecipeServiceImpl implements RecipeService {
             readRecipesFromMapFile();
         }
     }
+
     @Override
     public Long getRecId() {
         return recId;
@@ -145,15 +151,43 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException(e);
         }
     }
-//    private void readRecipeFromJsonFile() {
-//        try {
-//            String json = fileService.readRecipeFromFile();
-//            Recipe newRecipe = new ObjectMapper().readValue(json, new TypeReference<Recipe>() {
-//            });
-//            addRecipeFromFile(newRecipe);
-//
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+
+    @Override
+    public Path createTxtFile() throws IOException {
+        Path path = fileService.createTempFile("txtRecipes");//мы генерируем файл с именем "recipesForUser"
+        for (Recipe recipe : recipes.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                // newBufferedWriter открывает поток по пути path для записи в файл,
+                // StandardOpenOption.APPEND опция позволяет добавлять информацию в конец файла
+                writer.append(recipe.getName()).append("\n").append("\nВремя приготовления: ")
+                        .append(String.valueOf(recipe.getCookingTimeInMinutes())).append(" минут.\n")
+                        .append("Ингредиенты:\n");
+                recipe.getIngredients().forEach(ingredient -> {
+                    try {
+                        writer.append(" * ").append(ingredient.getName()).append(" ")
+                                .append(String.valueOf(ingredient.getQuantity())).append(" ")
+                                .append(ingredient.getMeasureUnit());
+                        writer.append("\n");
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                writer.append("\n");
+                writer.append("Инструкция приготовления: \n");
+                List<String> steps = recipe.getCookingSteps();
+                for (int i = 0; i < steps.size(); i++) {
+                    String s = (i + 1) + " " + steps.get(i) + "\n";
+                    try {
+                        writer.append(s);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                ;
+                writer.append(" ==============================================\n");
+            }
+        }
+        return path;
+    }
 }

@@ -1,6 +1,9 @@
 package pro.sky.recipesbook.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.core.io.InputStreamResource;
@@ -9,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pro.sky.recipesbook.model.Recipe;
 import pro.sky.recipesbook.services.FileService;
 import pro.sky.recipesbook.services.IngredientFileService;
 import pro.sky.recipesbook.services.RecipeService;
@@ -22,18 +26,29 @@ import java.nio.file.Path;
 public class FileController {
     private final FileService fileService;
     private final IngredientFileService ingredientFileService;
+    private final RecipeService recipeService;
 
-    public FileController(FileService fileService, IngredientFileService ingredientFileService) {
+    public FileController(FileService fileService, IngredientFileService ingredientFileService, RecipeService recipeService) {
         this.fileService = fileService;
         this.ingredientFileService = ingredientFileService;
+        this.recipeService = recipeService;
     }
 
+
     @GetMapping(value = "/export/txt")
-    @Operation(summary = "Экспорт файла рецептов в формате .txt")
+    @Operation(summary = "Экспорт файла рецептов в формате .txt",
+            description = "Сохраняем список всех рецептов в текстовом файле")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200", description = "запрос на экспорт txt-файла выполнился без проблем"
-            ),
+                    responseCode = "200",
+                    description = "запрос на экспорт txt-файла выполнился без проблем",
+                    content = {
+                            @Content(
+                                    mediaType = "application/txt",
+                                    array = @ArraySchema(schema =
+                                    @Schema(implementation = Recipe.class))
+                            )
+                    }),
             @ApiResponse(
                     responseCode = "400", description = "ошибка в параметрах запроса на экспорт txt-файла"
             ),
@@ -46,35 +61,23 @@ public class FileController {
     }
     )
 
-        public ResponseEntity<InputStreamResource> downloadTxtFile() throws IOException {
-//            Path path = fileService.saveTxt();
-            InputStreamResource resource = fileService.downloadTxtFile();
-            if (resource == null) {
+    public ResponseEntity<Object> downloadTxtFile() {
+        try {
+            Path path = recipeService.createTxtFile();
+            if (Files.size(path) == 0) {
                 return ResponseEntity.noContent().build();
             }
-                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN)
-//                        .contentLength(Files.size(path))
-                        .header(HttpHeaders.CONTENT_DISPOSITION , "attachment; filename=\"recipes.txt\"")
-                        .body(resource);
-//        header('Content-Type: application/json; charset=utf-8');
-
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"recipes.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
         }
-//        try {
-//            Path path = fileService.saveTxt();
-//            if (Files.size(path) == 0) {
-//                return ResponseEntity.noContent().build();
-//            }
-//            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
-//            return ResponseEntity.ok()
-//                    .contentType(MediaType.TEXT_PLAIN)
-//                    .contentLength(Files.size(path))
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"\"")
-//                    .body(resource);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return ResponseEntity.internalServerError().body(e.toString());
-//        }
-//
+    }
 
     @GetMapping("/recipes/export")
     @Operation(
