@@ -1,46 +1,50 @@
 GET http://localhost:8080
+
 ###
 GET http://localhost:8080/info
+
 ###
 GET http://localhost:8080/recipe/1
+
 ###
 POST http://localhost:8080/recipe
 Content-Type: application/json
 
 {
-    "name": "Сырники из творога",
-    "cookingTimeInMinutes": 40,
-    "ingredients": [
-      {
-        "name": "Творог",
-        "quantity": 350,
-        "measureUnit": "г"
-      },
-      {
-        "name": "Куриное яйцо",
-        "quantity": 2,
-        "measureUnit": "штуки"
-      },
-      {
-        "name": "Пшеничная мука",
-        "quantity": 6,
-        "measureUnit": "столовых ложек"
-      },
-      {
-        "name": "Сахар",
-        "quantity": 2,
-        "measureUnit": "столовые ложки"
-      }
-    ],
-    "cookingSteps": [
-      "Смешайте весь творог с яйцами, сахаром и тщательно всё перемешайте",
-      "Всыпьте в творог муку и тщательно перемешайте",
-      "Поставьте сковороду на средний огонь и налейте в нее подсолнечное масло",
-      "Слепите несколько небольших шариков из получившейся творожной массы и положите их на тарелку. Затем по очереди обкатывайте творожные шарики в муке и выкладывайте на сковороду",
-      "Обжаривайте сырники 1–2 минуты до появления золотистой корочки. Затем переверните их на другую сторону и также обжарьте до золотистого состояния",
-      "Повторяйте, пока творог не закончится"
-    ]
-  }
+  "name": "Сырники из творога",
+  "cookingTimeInMinutes": 40,
+  "ingredients": [
+    {
+      "name": "Творог",
+      "quantity": 350,
+      "measureUnit": "г"
+    },
+    {
+      "name": "Куриное яйцо",
+      "quantity": 2,
+      "measureUnit": "штуки"
+    },
+    {
+      "name": "Пшеничная мука",
+      "quantity": 6,
+      "measureUnit": "столовых ложек"
+    },
+    {
+      "name": "Сахар",
+      "quantity": 2,
+      "measureUnit": "столовые ложки"
+    }
+  ],
+  "cookingSteps": [
+    "Смешайте весь творог с яйцами, сахаром и тщательно всё перемешайте",
+    "Всыпьте в творог муку и тщательно перемешайте",
+    "Поставьте сковороду на средний огонь и налейте в нее подсолнечное масло",
+    "Слепите несколько небольших шариков из получившейся творожной массы и положите их на тарелку. Затем по очереди обкатывайте творожные шарики в муке и выкладывайте на сковороду",
+    "Обжаривайте сырники 1–2 минуты до появления золотистой корочки. Затем переверните их на другую сторону и также обжарьте до золотистого состояния",
+    "Повторяйте, пока творог не закончится"
+  ]
+}
+
 ###
 POST http://localhost:8080/recipe
 Content-Type: application/json
@@ -96,6 +100,7 @@ Content-Type: application/json
     "Посолить, поперчить, дать продуктам две минуты притереться друг к другу и подавать к столу"
   ]
 }
+
 ###
 POST http://localhost:8080/recipe
 Content-Type: application/json
@@ -162,6 +167,7 @@ Content-Type: application/json
     "Добавить обжаренные овощи в кастрюлю, влить сливки. Взбить суп ручным блендером, чтобы он превратился в густое пюре. Суп можно подавать к столу"
   ]
 }
+
 ###
 POST http://localhost:8080/recipe
 Content-Type: application/json
@@ -214,6 +220,7 @@ Content-Type: application/json
     "Посыпать кунжутными семечками и заправить майонезом"
   ]
 }
+
 ###
       POST http://localhost:8080/recipe
 Content-Type: application/json
@@ -266,87 +273,115 @@ Content-Type: application/json
     "Готовые пончики выложить на бумажное полотенце и оставить на одну-две минуты — чтобы оно впитало лишнее масло. Подавать пончики горячими, выложив на блюдо и посыпав сахарной пудрой, смешанной с ванилином"
   ]
 }
+
 ###
 GET http://localhost:8080/recipe/3
+
 ###
 GET http://localhost:8080/recipe
+
 ###
 DELETE http://localhost:8080/recipe/3
+
 ###
 GET http://localhost:8080/recipe/1
+
 ###
 DELETE http://localhost:8080/recipe
+
 ###
 GET http://localhost:8080/recipe/1
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Творог",
-      "quantity": 250,
-      "measureUnit": "г"
-    }
+{
+  "name": "Творог",
+  "quantity": 250,
+  "measureUnit": "г"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Куриное яйцо",
-      "quantity": 3,
-      "measureUnit": "штуки"
-    }
+{
+  "name": "Куриное яйцо",
+  "quantity": 3,
+  "measureUnit": "штуки"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Пшеничная мука",
-      "quantity": 8,
-      "measureUnit": "столовых ложек"
-    }
+{
+  "name": "Пшеничная мука",
+  "quantity": 8,
+  "measureUnit": "столовых ложек"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Сахар и соль",
-      "quantity": 0,
-      "measureUnit": "по вкусу"
-    }
+{
+  "name": "Сахар и соль",
+  "quantity": 0,
+  "measureUnit": "по вкусу"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Сода",
-      "quantity": 0.5,
-      "measureUnit": "чайные ложки"
-    }
+{
+  "name": "Сода",
+  "quantity": 0.5,
+  "measureUnit": "чайные ложки"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Оливковое масло",
-      "quantity": 0,
-      "measureUnit": "по вкусу"
-    }
+{
+  "name": "Оливковое масло",
+  "quantity": 0,
+  "measureUnit": "по вкусу"
+}
+
 ###
 POST http://localhost:8080/ingredient
 Content-Type: application/json
 
-    {
-      "name": "Сахарная пудра с ванилью",
-      "quantity": 0,
-      "measureUnit": "по вкусу"
-    }
+{
+  "name": "Сахарная пудра с ванилью",
+  "quantity": 0,
+  "measureUnit": "по вкусу"
+}
 
 ###
 GET http://localhost:8080/ingredient/2
+
 ###
 GET http://localhost:8080/ingredient
+
 ###
 DELETE http://localhost:8080/ingredient/2
+
 ###
 GET http://localhost:8080/ingredient/5
+
+###
+GET http://localhost:8080/files/ingredients/export
+
+###
+GET http://localhost:8080/files/recipes/export
+
+###
+PUT http://localhost:8080/files/recipes/import
+
+###
+GET http://localhost:8080/files/export/txt
